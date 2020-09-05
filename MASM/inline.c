@@ -12,6 +12,7 @@ int count = 0;
 
 void main()
 {
+// int $0x80 系统调用接口仅适用于32位代码.64位代码中应使用syscall系统调用(中断描述符表)
 asm("pusha; \
     movl $4, %eax; \
     movl $1, %ebx; \
