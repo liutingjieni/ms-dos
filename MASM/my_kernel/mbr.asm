@@ -1,5 +1,4 @@
-LOADER_START_SECTOR equ  0x02
-LOADER_START_ADDR equ 0x900
+%include "boot.inc"
 
 section MBR vstart=0x7c00
     mov ax, cs
@@ -19,33 +18,33 @@ section MBR vstart=0x7c00
     int 10h
 
     mov byte [gs:0x00], '1'
-    mov byte [gs:0x01], 0xA4
+    mov byte [gs:0x01], 0x70
 
     mov byte [gs:0x02], ' '
-    mov byte [gs:0x03], 0xA4
+    mov byte [gs:0x03], 0x70
 
     mov byte [gs:0x04], 'M'
     mov byte [gs:0x05], 0xA4
     
     mov byte [gs:0x06], 'B'
-    mov byte [gs:0x07], 0xA4
+    mov byte [gs:0x07], 0x70
     
     mov byte [gs:0x08], 'R'
     mov byte [gs:0x09], 0xA4
 
     mov eax, LOADER_START_SECTOR
-    mov bx, 0x0a;
+    mov bx, LOADER_BASE_ADDR;
     mov cx, 1
-    ;call rd_disk_m_16
+    call rd_disk_m_16
 
-    jmp $
+    jmp LOADER_BASE_ADDR
 
 rd_disk_m_16: 
                         ;eax=LBA扇区号
                         ;bx=将数据写入的内存地址
                         ;cx=读入的扇区数
     mov esi, eax ;
-    mov al, cl
+    mov di, cx
 
     mov dx, 0x1f2
     mov al,cl
@@ -86,16 +85,15 @@ rd_disk_m_16:
 
 ;第五步:从0x1f0端口读数据
     mov ax, di
-    mov dx, 512
+    mov dx, 256
     mul dx         ;dx:ax<-dx*ax
     mov cx, ax     
 ;di为要读取的扇区数,一个扇区有512字节,每次读入一个字
     mov dx, 0x1f0
 
 .go_on_read:
-    in al, dx
-    mov byte [gs:bx], al
-    mov byte [gs:bx+1], 0x07
+    in ax, dx
+    mov [bx], ax
     add bx, 2
     loop .go_on_read
     ret
