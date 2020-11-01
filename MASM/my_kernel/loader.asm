@@ -13,7 +13,7 @@ CODE_DESC: dd 0x0000ffff
 
 ;数据段与栈段共用一个段描述符
 DATA_STACK_DESC: dd 0x0000ffff  
-                 dd DESC_CODE_HIGH4
+                 dd DESC_DATA_HIGH4
 
 ;显存段不采用平坦模式
 VIDEO_DESC: dd 0x80000007; limit=(0xbffff-0xb8000)/4k=0x7
@@ -42,7 +42,7 @@ loader_start:
     mov cx, 17      ;字符串长度
     mov ax, 0x1301  ;ah子功能号, al显示输出方式
     mov bx, 0x001f  ;bh页码, bl属性(al = 0/1)
-    mov dx, 0x1800  ;dh, dl坐标
+    mov dx, 0x1000  ;dh, dl坐标
     int 0x10
 
 

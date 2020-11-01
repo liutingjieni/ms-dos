@@ -21,10 +21,10 @@ DESC_AVL equ  0_00000000000000000000b
 
 DESC_LIMIT_CODE2 equ  1111_0000000000000000b 
 DESC_LIMIT_DATA2 equ  DESC_LIMIT_CODE2 
-DESC_LIMIT_VIDEO2 equ  0000_00000000000000b 
+DESC_LIMIT_VIDEO2 equ 0000_0000000000000000b 
 
 ;present存在位, 段是否存在内存当中
-DESC_P equ  0_0000000000000000b 
+DESC_P equ  1_000000000000000b 
 
 ;DPL(Descriptor Privilege Level)描述符特权级
 DESC_DPL_0 equ  00_0000000000000b 
@@ -36,14 +36,14 @@ DESC_DPL_3 equ  11_0000000000000b
 ;凡是硬件运行需要用到的东西都可称之为系统段
 ;凡是软件(操作系统也属于软件, CPU眼里吗他与用户程序无区别)需要的东西都称之为数据
 ;s=0 为系统段
-DESC_S_CODE equ  0_000000000000b 
+DESC_S_CODE equ  1_000000000000b 
 DESC_S_DATA equ  DESC_S_CODE
-DESC_S_sys equ  0_000000000000b 
+DESC_S_sys equ   0_000000000000b 
 
 ;用于表示内存段或门的子类型
 ;x=1,c=0,r=0,a=0 代码段是可执行的,非一致性,不可读,已访问位a清0
 DESC_TYPE_CODE equ  1000_00000000b  
-;x=1,e=0,w=1,a=0 数据段是不可执行的,向上扩展的,可写,已访问a清0
+;x=0,e=0,w=1,a=0 数据段是不可执行的,向上扩展的,可写,已访问a清0
 DESC_TYPE_DATA equ 0010_00000000b
 
 ;定义了代码段的高4字节
