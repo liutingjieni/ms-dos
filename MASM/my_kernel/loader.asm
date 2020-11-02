@@ -16,7 +16,7 @@ DATA_STACK_DESC: dd 0x0000ffff
                  dd DESC_DATA_HIGH4
 
 ;显存段不采用平坦模式
-VIDEO_DESC: dd 0x80000007; limit=(0xbffff-0xb8000)/4k=0x7
+VIDEO_DESC: dd 0x80008fff; limit=(0xbffff-0xb8000)/4k=0x7
            dd DESC_VIDEO_HIGH4
 
 GDT_SIZE equ $ - GDT_BASE
@@ -115,13 +115,13 @@ loader_start:
     ;------------------------------------------
     ;int 0x10  功能号:0x13  功能描述:打印字符串
     ;-----------------------------------------
-    mov sp, LOADER_BASE_ADDR
-    mov bp, loadermsg
-    mov cx, 17      ;字符串长度
-    mov ax, 0x1301  ;ah子功能号, al显示输出方式
-    mov bx, 0x001f  ;bh页码, bl属性(al = 0/1)
-    mov dx, 0x1000  ;dh, dl坐标
-    int 0x10
+   ; mov sp, LOADER_BASE_ADDR
+   ; mov bp, loadermsg
+   ; mov cx, 17      ;字符串长度
+   ; mov ax, 0x1301  ;ah子功能号, al显示输出方式
+   ; mov bx, 0x001f  ;bh页码, bl属性(al = 0/1)
+   ; mov dx, 0x1000  ;dh, dl坐标
+   ; int 0x10
 
 
     ;打开A20
@@ -151,8 +151,38 @@ p_mode_start:
     mov ax,  SELECTOR_VIDEO
     mov gs, ax
 
-    mov byte [gs:160], 'P'
+   mov byte [gs:160], 'P'
     mov byte [gs:161], 0x70
+
+
+;创建页目录表及页表并初始化内存位图
+call setup_page
+    
+;要将描述符表地址及其偏移量写入内存gdt_ptr
+sgdt [gdt_ptr]
+
+;将gdt描述符中视频段描述符中的段基址+ 0xc0000000
+mov ebx, [gdt_ptr + 2]
+or dword [ebx + 0x18 + 4], 0xc0000000
+
+;全局描述符表重定位到虚拟地址空间
+add dword [gdt_ptr + 2], 0xc0000000
+
+add esp, 0xc0000000
+
+mov eax, PAGE_DIR_TABLE_POS
+mov cr3, eax
+
+mov eax, cr0
+or eax, 0x80000000
+mov cr0, eax
+
+;开启分页后, 用gdt新的地址重新加载
+lgdt [gdt_ptr]
+
+mov byte [gs:162], 'V'
+    
+jmp $
 
 
 setup_page:
@@ -181,7 +211,7 @@ setup_page:
 
     ;页目录项0和0xc00都存入第一个也标的地址, 每个页表表示4MB内存
     mov [PAGE_DIR_TABLE_POS + 0x0], eax
-    mov [PAGE_DIR_TABLE_POS + oxc00], eax
+    mov [PAGE_DIR_TABLE_POS + 0xc00], eax
 
     ;最后一个页目录项指向页目录表自己
     sub eax, 0x1000
@@ -190,13 +220,13 @@ setup_page:
     ;创建页表项,将物理内存低端的1M内存映射到的第一张页表,
     ;这张页表的地址在前面也同时映射在页目录项的0和0xc00处
     mov ecx, 256
-    mox esi, 0
+    mov esi, 0
     mov edx, PG_US_U | PG_RW_W | PG_P ;低端的1M内存映射 1M/4K = 256
 .create_pte:
     mov [ebx + esi * 4], edx
     add edx, 4096
     inc esi
-    loop.create_pte
+    loop .create_pte
 
     ;为内核空间创建所有的页目录项, 分配其余254个页表,最后一个自己的物理地址
     ;实现用户进程共享内核空间
@@ -212,6 +242,5 @@ setup_page:
     inc esi
     add eax, 0x1000
     loop .create_kernel_pde
-
     ret
-jmp $
+
