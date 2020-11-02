@@ -154,4 +154,64 @@ p_mode_start:
     mov byte [gs:160], 'P'
     mov byte [gs:161], 0x70
 
-    jmp $
+
+setup_page:
+;-----------------------------
+;1. 准备好页目录表及页表
+;2. 将页表地址写入控制寄存器
+;3. 寄存器cr0的PG位置1
+;-----------------------------
+
+;先把页目录项占用的空间逐字节清0
+    mov ecx, 4096
+    mov esi, 0
+.clear_page_dir:
+    mov byte [PAGE_DIR_TABLE_POS + esi], 0
+    inc esi
+    loop .clear_page_dir
+
+;开始创建页目录项
+.create_pde:
+    mov eax, PAGE_DIR_TABLE_POS
+    add eax, 0x1000
+    mov ebx, eax ;第一个页表项页地址
+
+    ;页目录项的属性位
+    or eax, PG_US_U | PG_RW_W | PG_P
+
+    ;页目录项0和0xc00都存入第一个也标的地址, 每个页表表示4MB内存
+    mov [PAGE_DIR_TABLE_POS + 0x0], eax
+    mov [PAGE_DIR_TABLE_POS + oxc00], eax
+
+    ;最后一个页目录项指向页目录表自己
+    sub eax, 0x1000
+    mov [PAGE_DIR_TABLE_POS + 4092], eax
+
+    ;创建页表项,将物理内存低端的1M内存映射到的第一张页表,
+    ;这张页表的地址在前面也同时映射在页目录项的0和0xc00处
+    mov ecx, 256
+    mox esi, 0
+    mov edx, PG_US_U | PG_RW_W | PG_P ;低端的1M内存映射 1M/4K = 256
+.create_pte:
+    mov [ebx + esi * 4], edx
+    add edx, 4096
+    inc esi
+    loop.create_pte
+
+    ;为内核空间创建所有的页目录项, 分配其余254个页表,最后一个自己的物理地址
+    ;实现用户进程共享内核空间
+    mov eax, PAGE_DIR_TABLE_POS
+    add eax, 0x2000
+    or eax, PG_US_U | PG_RW_W | PG_P
+    mov ebx, PAGE_DIR_TABLE_POS
+    mov ecx, 254
+    mov esi, 769 ;0xc00 / 4
+
+.create_kernel_pde:
+    mov [ebx + esi * 4], eax
+    inc esi
+    add eax, 0x1000
+    loop .create_kernel_pde
+
+    ret
+jmp $
