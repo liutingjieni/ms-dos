@@ -261,7 +261,7 @@ setup_page:
     ret
 
 
-------------将kernel.bin中的segment拷贝到编译的地址-------------
+;------------将kernel.bin中的segment拷贝到编译的地址-------------
 kernel_init:
     xor eax, eax
     xor ebx, ebx    ;ebx记录程序头表地址
@@ -275,11 +275,11 @@ kernel_init:
     mov cx, [KERNEL_BIN_BASE_ADDR + 44]
 
 .each_segment:
-    cmp byte [ebx + 0], PT_NULL ;p_type段的类型, PT_NULL该段为空
+    cmp byte [ebx + 0], 0 ;p_type段的类型, PT_NULL该段为空
     je .PTNULL
 
     ;函数memcpy(dst, src, size)压入参数, 参数是从右往左压入
-    push_dword [ebx + 16]           ;ebx+16 p_filesz, 本段在文件中的大小
+    push dword [ebx + 16]           ;ebx+16 p_filesz, 本段在文件中的大小
 
     mov eax, [ebx + 4]              ;p_offset本段在文件内的起始偏移地址
     add eax, KERNEL_BIN_BASE_ADDR   ;重定位
@@ -369,7 +369,7 @@ rd_disk_m_32:
 .go_on_read:
     in ax, dx
     mov [ebx], ax
-    add bx, 2
+    add ebx, 2
     loop .go_on_read
     ret
 
