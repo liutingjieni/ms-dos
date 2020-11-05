@@ -122,8 +122,11 @@ put_char:
 
 
 global put_str
+;-----------------------------------
+;put_str通过put_char来打印以0结尾的字符
+;-----------------------------------
 put_str:
-    push ebx
+    push ebx              ;由于
     push ecx
     xor ecx, ecx
     mov ebx, [esp + 12]
@@ -142,7 +145,7 @@ put_str:
     ret
 
 section .data
-put_int_buffer dq 0
+put_int_buffer dq 0       ;定义8字节缓冲区用于数字到字符的转换
 
 global put_int
 put_int:
@@ -197,3 +200,10 @@ put_int:
     jl .put_each_num
     popad
     ret
+
+;-----------------------------------
+;函数调用规范cdecl
+;调用者将所有参数从右向左入栈
+;调用者清理参数所占的栈空间
+;-----------------------------------
+
