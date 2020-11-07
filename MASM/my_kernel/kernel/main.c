@@ -9,8 +9,14 @@
 
 void main()
 {
+    put_char('u');
+    put_char('u');
+    put_char('u');
     put_str("l am kernel\n");
+    put_str("l am kernel\n");
+    put_int(0x1234);
+    put_int(0x1234);
     init_all();
-    asm volatile("sti");  \\为演示中断处理,在此临时开中断
+    asm volatile("sti"); 
     while(1);
 }

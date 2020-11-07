@@ -4,92 +4,125 @@
 	> Mail: 
 	> Created Time: 2020年11月05日 星期四 16时56分52秒
  ************************************************************************/
-
-#include "interrupt.c"
-#include "stdint.h"
+#include "interrupt.h"
 #include "global.h"
-
-#define IDT_DESC_CNT 0x21
-
-#define PIC_M_CTRL  0x20
-#define PIC_M_DATA 0x21
-#define PIC_S_CTRL 0xa0
-#define PIC_S_DATA 0xal
+#include "io.h"
+#include "print.h"
 
 
+#define PIC_M_CTRL  0x20                //主片的控制端口0x20
+#define PIC_M_DATA 0x21                 //主片的数据端口0x21
+#define PIC_S_CTRL 0xa0                 //从片的控制端口0xa0
+#define PIC_S_DATA 0xal                 //从片的数据端口0xa1
+
+typedef void *intr_handler;
 //中断门描述符结构体
 struct gate_desc {
-    uint16_t func_offset_low_word;      //中断处理程序在目标代码段偏移量的偏移量低16位
+    uint16_t func_offset_low_word;      //中断处理程序在目标代码段偏移量的偏移量高16位
     uint16_t selector;                  //中断处理程序目标代码段选择子
     uint8_t dcount;                     //双字计数字段
     uint8_t attribute;                  //属性位
-    uint16_t func_offset_low_word;      //中断处理程序在目标代码段偏移量的偏移量低16位
+    uint16_t func_offset_high_word;      //中断处理程序在目标代码段偏移量的偏移量低16位
 };
 
-static void make_idt_desc(struct gate_desc*p_gdesc, uint8_t attr, intr_handler function);
+char *intr_name[IDT_DESC_CNT];
+intr_handler idt_table[IDT_DESC_CNT];
 static struct gate_desc idt[IDT_DESC_CNT];
 
-extern intr_handler intr_entry_table[IDT_DESC_CNT];
 
 //创建中断门描述符
 static void make_idt_desc(struct gate_desc*p_gdesc, uint8_t attr, intr_handler function)
 {
-    p_gdesc->func_offset_low_word = (uin32_t)function & 0x0000ffff;
+    p_gdesc->func_offset_low_word = (uint32_t)function & 0x0000ffff;
     p_gdesc->selector = SELECTOR_K_CODE;
     p_gdesc->dcount = 0;
     p_gdesc->attribute = attr;
-    p_gdesc->func_offset_high_word = ((uin32_t)function & 0xffff0000) >> 16;
+    p_gdesc->func_offset_high_word = ((uint32_t)function & 0xffff0000) >> 16;
 }
 
 //初始化中断描述符
 static void idt_des_init(void)
 {
     for (int i = 0; i < IDT_DESC_CNT; i++) {
+        put_int((uint32_t)intr_entry_table[i]);
+        put_char(' ');
         make_idt_desc(&idt[i], IDT_DESC_ATTR_DPL0, intr_entry_table[i]);
     }
     put_str("   idt_des_init done\n");
+    put_int(IDT_DESC_ATTR_DPL0);
 }
 
-//完成有关中断的所有初始化工作
-void idt_init()
-{
-    put_str("idt_init start\n");
-    idt_des_init();
-    pic_init();
-
-    //加载idt
-    uint64_t idt_operand = ((sizeof(idt) - 1) | (uint64_t)(uint32_t)idt << 16);
-    asm volatile("lidt %0": : "m"(idt_operand));
-    put_str("idt_init done\n");
-}
-
+//初始化可编程中断控制器
+//
 static void pic_init(void)
 {
-    outb(PIC_M_CTRL, 0x11);
-    outb(PIC_M_DATA, 0x20);
-
-    outb(PIC_M_DATA, 0x04);
-    outb(PIC_M_DATA, 0x01);
+    outb(PIC_M_CTRL, 0x11);     
+    outb(PIC_M_DATA, 0x20);      //ICW2: 起始中断向量号0x20
+                                 //IR[0~7]为0x20~0x27
+    outb(PIC_M_DATA, 0x04);      //ICW3: IR2接从片
+    outb(PIC_M_DATA, 0x01);      //ICW4: 8086模式, 正常EOI
     
-    outb(PIC_M_CTRL, 0x11);
-    outb(PIC_M_DATA, 0x28);
+    outb(PIC_M_CTRL, 0x11);      //ICW1: 边沿触发. 级联8259, 需要ICW4
+    outb(PIC_M_DATA, 0x28);      //ICW2: 起始中断向量号0x28
+                                 //也就是IR[8~15]为0x28~0x2F
+    outb(PIC_M_DATA, 0x02);      //ICW3: 设置从片连接到主片的IR2引脚
+    outb(PIC_M_DATA, 0x01);      //ICW4: 8086模式, 正常EOI
 
-    outb(PIC_M_DATA, 0x02);
-    outb(PIC_M_DATA, 0x01);
-
+    //打开主片上的IR0, 也就是目前只接受时钟产生的中断
     outb(PIC_M_DATA, 0xfe);
     outb(PIC_M_DATA, 0xff);
 
     put_str("   pic_init done\n");
 }
-
+//完成有关中断的所有初始化工作
 void idt_init()
 {
-    put_str("idt_init start\n");
-    idt_des_init();
-    pic_init();
+    idt_des_init();              //初始化中断描述符表
+    exception_init();
+    pic_init();                  //初始化8259A
 
+    //加载idt
     uint64_t idt_operand = ((sizeof(idt) - 1) | ((uint64_t)((uint32_t)idt << 16)));
-    asm volatile("lidt %0" : : "m"(idt_operand));
+    asm volatile("lidt %0": : "m"(idt_operand));
     put_str("idt_init done\n");
+}
+
+static void general_intr_handler(uint8_t vec_nr)
+{
+    if (vec_nr == 0x27 || vec_nr == 0x2f) {
+        return;
+    }
+    put_str("int vector: 0x");
+    put_int(vec_nr);
+    put_char('\n');
+}
+
+static void exception_init(void)
+{
+    int i;
+    for (i = 0; i < IDT_DESC_CNT; i++) {
+        idt_table[i] = general_intr_handler;
+
+        intr_name[i] = "unknown";
+    }
+    intr_name[0] = "#DE Divide Error";
+    intr_name[1] = "#DE Divide Error";
+    intr_name[2] = "#DE Divide Error";
+    intr_name[3] = "#DE Divide Error";
+    intr_name[4] = "#DE Divide Error";
+    intr_name[5] = "#DE Divide Error";
+    intr_name[6] = "#DE Divide Error";
+    intr_name[7] = "#DE Divide Error";
+    intr_name[8] = "#DE Divide Error";
+    intr_name[9] = "#DE Divide Error";
+    intr_name[10] = "#DE Divide Error";
+    intr_name[11] = "#DE Divide Error";
+    intr_name[12] = "#DE Divide Error";
+    intr_name[13] = "#DE Divide Error";
+    intr_name[14] = "#DE Divide Error";
+    intr_name[15] = "#DE Divide Error";
+    intr_name[16] = "#DE Divide Error";
+    intr_name[17] = "#DE Divide Error";
+    intr_name[18] = "#DE Divide Error";
+    intr_name[19] = "#DE Divide Error";
 }
