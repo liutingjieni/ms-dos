@@ -44,8 +44,6 @@ static void make_idt_desc(struct gate_desc*p_gdesc, uint8_t attr, intr_handler f
 static void idt_des_init(void)
 {
     for (int i = 0; i < IDT_DESC_CNT; i++) {
-        put_int((uint32_t)intr_entry_table[i]);
-        put_char(' ');
         make_idt_desc(&idt[i], IDT_DESC_ATTR_DPL0, intr_entry_table[i]);
     }
     put_str("   idt_des_init done\n");
@@ -74,29 +72,15 @@ static void pic_init(void)
 
     put_str("   pic_init done\n");
 }
-//完成有关中断的所有初始化工作
-void idt_init()
-{
-    idt_des_init();              //初始化中断描述符表
-    exception_init();
-    pic_init();                  //初始化8259A
-
-    //加载idt
-    uint64_t idt_operand = ((sizeof(idt) - 1) | ((uint64_t)((uint32_t)idt << 16)));
-    asm volatile("lidt %0": : "m"(idt_operand));
-    put_str("lala\n");
-    put_int(idt_operand);
-    put_str("idt_init done\n");
-}
 
 static void general_intr_handler(uint8_t vec_nr)
 {
     if (vec_nr == 0x27 || vec_nr == 0x2f) {
-        put_str("int vector: 0xxxxxxxxx");
         return;
     }
-    put_str("\nint vector: 0x\n");
+    put_str("int vector: 0x");
     put_int(vec_nr);
+    put_str(intr_name[vec_nr]);
     put_char('\n');
 }
 
@@ -129,4 +113,17 @@ static void exception_init(void)
    intr_name[17] = "#AC Alignment Check Exception";
    intr_name[18] = "#MC Machine-Check Exception";
    intr_name[19] = "#XF SIMD Floating-Point Exception";
+}
+
+//完成有关中断的所有初始化工作
+void idt_init()
+{
+    idt_des_init();              //初始化中断描述符表
+    exception_init();
+    pic_init();                  //初始化8259A
+
+    //加载idt
+    uint64_t idt_operand = ((sizeof(idt) - 1) | ((uint64_t)((uint32_t)idt << 16)));
+    asm volatile("lidt %0": : "m"(idt_operand));
+    put_str("idt_init done\n");
 }
