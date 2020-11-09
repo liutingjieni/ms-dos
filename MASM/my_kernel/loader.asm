@@ -207,7 +207,6 @@ jmp $
 
 
 setup_page:
-
 ;先把页目录项占用的空间逐字节清0
     mov ecx, 4096
     mov esi, 0
