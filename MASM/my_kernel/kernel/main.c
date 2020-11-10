@@ -6,17 +6,15 @@
  ************************************************************************/
 #include "print.h"
 #include "init.h"
+#include "debug.h"
 
-void main()
+int main(void)
 {
-    put_char('u');
-    put_char('u');
-    put_char('u');
-    put_str("l am kernel\n");
     put_str("l am kernel\n");
     put_int(0x1234);
     put_int(0x1234);
     init_all();
-    asm volatile("sti"); 
+    ASSERT(1==2);
     while(1);
+    return 0;
 }
