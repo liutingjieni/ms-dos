@@ -152,9 +152,11 @@ enum intr_status intr_disable(void)
     enum intr_status old_status;
     if (INTR_NO == intr_get_status()) {
         old_status = INTR_NO;
+        put_str("INTR_NO---");
         asm volatile("cli": : :"memory");
         return old_status;
     } else {
+        put_str("INTR_OFF--_-");
         old_status = INTR_OFF;
         return old_status;
     }
