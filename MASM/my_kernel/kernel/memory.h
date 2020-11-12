@@ -35,4 +35,5 @@ enum pool_flags {
 #define PG_US_S 0                  //系统位
 #define PG_US_U 4                  //用户位
 
+void *get_kernel_pages(uint32_t);
 #endif

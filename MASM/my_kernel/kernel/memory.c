@@ -195,16 +195,21 @@ static void page_table_add(void* _vaddr, void *_page_phyaddr)
     }
 }
 
-void malloc_page(enum pool_flags pf, uint32_t pg_cnt)
+//分配pg_cnt个页空间, 成功则返回起始虚拟地址, 失败则返回NULL
+void *malloc_page(enum pool_flags pf, uint32_t pg_cnt)
 {
     ASSERT(pg_cnt > 0 && pg_cnt < 3840);
 
+    //****************malloc_page的原理是三个动作合成的合成*****************
+    //1. 通过vaddr_get在虚拟内存池中申请虚拟地址
+    //2. 通过palloc在物理内存池中申请物理页
+    //3. 通过page_table_add将以上得到的虚拟地址和物理地址在页表中完成映射
     void * vaddr_start = vaddr_get(pf, pg_cnt);
     if (vaddr_start == NULL) {
         return NULL;
     }
     uint32_t vaddr = (uint32_t)vaddr_start, cnt = pg_cnt;
-    struct pool* mem_pool = pf & PF_KERNEL ? kernel_pool : &user_pool;
+    struct pool* mem_pool = pf & PF_KERNEL ? &kernel_pool : &user_pool;
 
     while (cnt-- > 0) {
         void *page_phyaddr = palloc(mem_pool);
@@ -219,7 +224,7 @@ void malloc_page(enum pool_flags pf, uint32_t pg_cnt)
 
 void *get_kernel_pages(uint32_t pg_cnt)
 {
-    void * vaddr = malloc_page(PF_KERNEL, pg_cnt);
+    void *vaddr = malloc_page(PF_KERNEL, pg_cnt);
     if (vaddr != NULL) {
         memset(vaddr, 0, pg_cnt * PG_SIZE);
     }
