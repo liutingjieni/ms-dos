@@ -7,6 +7,7 @@
 #include "print.h"
 #include "init.h"
 #include "debug.h"
+#include "memory.h"
 
 int main(void)
 {
@@ -14,7 +15,8 @@ int main(void)
     put_int(0x1234);
     put_int(0x1234);
     init_all();
-    ASSERT(1==2);
+    //ASSERT(1==2);
+    mem_init();
     while(1);
     return 0;
 }

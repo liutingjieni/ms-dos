@@ -19,7 +19,7 @@ void bitmap_init(struct bitmap *btmp)
 }
 
 //判断bit_idx位是否为1, 若为1, 则返回true, 否则返回false
-bool bitmap_scan_test(struct bitmap *btmp, uint32_t bit_idx)
+int bitmap_scan_test(struct bitmap *btmp, uint32_t bit_idx)
 {
     uint32_t byte_idx = bit_idx / 8;
     uint32_t bit_odd = bit_idx % 8;
@@ -33,7 +33,7 @@ int bitmap_scan(struct bitmap *btmp, uint32_t cnt)
     while ((0xff == btmp->bits[idx_byte]) && (idx_byte < btmp->btmp_bytes_len)) {
         idx_byte++;
     }
-    ASSERT(idx_byte < btmp_bytes_len);
+    ASSERT(idx_byte < btmp->btmp_bytes_len);
     if (idx_byte == btmp->btmp_bytes_len) {
         return -1;
     }
@@ -54,7 +54,7 @@ int bitmap_scan(struct bitmap *btmp, uint32_t cnt)
 
     bit_idx_start = -1;
     while (bit_left-- > 0) {
-        if (!(bitmap_scan_test(temp, next_bit))) {
+        if (!(bitmap_scan_test(btmp, next_bit))) {
             count++;
         } 
         else {
@@ -65,7 +65,7 @@ int bitmap_scan(struct bitmap *btmp, uint32_t cnt)
         }
         next_bit++;
     }
-    retur bit_idx_start;
+    return bit_idx_start;
 }
 
 //将位图btmp的bit_idx位设置为value
@@ -76,9 +76,9 @@ void bitmap_set(struct bitmap *btmp, uint32_t bit_idx, int8_t value)
     uint32_t bit_odd= bit_idx % 8;
 
     if (value) {
-        btmp->bit[byte_idx] |= (BITMAP_MASK << bit_odd); 
+        btmp->bits[byte_idx] |= (BITMAP_MASK << bit_odd); 
     }
     else {
-        btmp->bit[byte_idx] &= (BITMAP_MASK << bit_odd); 
+        btmp->bits[byte_idx] &= (BITMAP_MASK << bit_odd); 
     }
 }

@@ -19,4 +19,14 @@ struct virtual_addr {
 extern struct pool kernel_pool, user_pool;
 
 void mem_init(void);
+
+enum pool_flags {
+    PF_KERNEL = 1;
+    PF_USER = 2;
+};
+
+#define PG_P_1 1
+#define PG_P_1 0
+
+
 #endif

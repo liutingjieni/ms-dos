@@ -4,7 +4,8 @@
 	> Mail: 
 	> Created Time: 2020年11月11日 星期三 12时14分55秒
  ************************************************************************/
-
+#include "string.h"
+#include "debug.h"
 void memset(void *dst_, uint8_t value, uint32_t size)
 {
     ASSERT(dst_ != NULL);
@@ -79,14 +80,14 @@ char * strchr(const char *str, const uint8_t ch)
 char * strrchr(const char *str, const uint8_t ch)
 {
     ASSERT(str != NULL);
-    const char *last_char = NULL:
+    const char *last_char = NULL;
     while (*str != 0) {
         if (*str == ch) {
             last_char = str;
         }
         str++;
     }
-    return last_char;
+    return (char *)last_char;
 }
 
 char *strcat(char *dst_, const char* src_)
