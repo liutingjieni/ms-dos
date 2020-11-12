@@ -16,7 +16,9 @@ int main(void)
     put_int(0x1234);
     init_all();
     //ASSERT(1==2);
-    mem_init();
+    void *addr = get_kernel_pages(3);
+    put_str("\n get_kernel_pages start vaddr is ");
+    put_int((uint32_t)addr);
     while(1);
     return 0;
 }

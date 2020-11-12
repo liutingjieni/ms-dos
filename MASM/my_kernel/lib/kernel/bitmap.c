@@ -26,7 +26,7 @@ int bitmap_scan_test(struct bitmap *btmp, uint32_t bit_idx)
     return (btmp->bits[byte_idx] & (BITMAP_MASK << bit_odd));
 }
 
-//在位图中申请连续cnt个位, 则返回其起始下标, 失败, 返回-1
+//在位图中申请连续cnt个位, 则返回其bit起始下标, 失败, 返回-1
 int bitmap_scan(struct bitmap *btmp, uint32_t cnt)
 {
     uint32_t idx_byte = 0;      //用于记录空闲位所在的字节
