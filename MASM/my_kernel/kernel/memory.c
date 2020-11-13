@@ -125,6 +125,7 @@ static void *vaddr_get(enum pool_flags pf, uint32_t pg_cnt)
 
     uint32_t cnt = 0;
     if (pf == PF_KERNEL) {
+        //bit_idx_start指起始下标
         bit_idx_start = bitmap_scan(&kernel_vaddr.vaddr_bitmap, pg_cnt);
         if (bit_idx_start == -1) {
             return NULL;
@@ -132,7 +133,7 @@ static void *vaddr_get(enum pool_flags pf, uint32_t pg_cnt)
         while (cnt < pg_cnt) {
             bitmap_set(&kernel_vaddr.vaddr_bitmap, bit_idx_start + cnt++, 1);
         }
-        vaddr_start = kernel_vaddr.vaddr_start + bit_idx_start + PG_SIZE;
+        vaddr_start = kernel_vaddr.vaddr_start + bit_idx_start * PG_SIZE;
     }
     else {
         //用户内存池, 将来实现用户进程再补充
@@ -171,7 +172,7 @@ static void *palloc(struct pool* m_pool)
 //页表中添加虚拟地址_vaddr与物理地址_page_phyaddr的映射
 static void page_table_add(void* _vaddr, void *_page_phyaddr)
 {
-    uint32_t vaddr = (uint32_t)vaddr, page_phyaddr = (uint32_t)_page_phyaddr;
+    uint32_t vaddr = (uint32_t)_vaddr, page_phyaddr = (uint32_t)_page_phyaddr;
     uint32_t *pde = pde_ptr(vaddr);
     uint32_t *pte = pte_ptr(vaddr);
 
@@ -204,11 +205,14 @@ void *malloc_page(enum pool_flags pf, uint32_t pg_cnt)
     //1. 通过vaddr_get在虚拟内存池中申请虚拟地址
     //2. 通过palloc在物理内存池中申请物理页
     //3. 通过page_table_add将以上得到的虚拟地址和物理地址在页表中完成映射
-    void * vaddr_start = vaddr_get(pf, pg_cnt);
+    void *vaddr_start = vaddr_get(pf, pg_cnt);
     if (vaddr_start == NULL) {
         return NULL;
     }
+    put_int(vaddr_start);
     uint32_t vaddr = (uint32_t)vaddr_start, cnt = pg_cnt;
+    put_int(vaddr);
+    put_str("\n");
     struct pool* mem_pool = pf & PF_KERNEL ? &kernel_pool : &user_pool;
 
     while (cnt-- > 0) {
