@@ -8,6 +8,8 @@
 #include "init.h"
 #include "debug.h"
 #include "memory.h"
+#include "thread.h"
+void k_thread_a(void *);
 
 int main(void)
 {
@@ -16,9 +18,16 @@ int main(void)
     put_int(0x1234);
     init_all();
     //ASSERT(1==2);
-    void *addr = get_kernel_pages(3);
-    put_str("\n get_kernel_pages start vaddr is ");
-    put_int((uint32_t)addr);
+    thread_start("k_thread_a", 31, k_thread_a, "argA");
+
     while(1);
     return 0;
+}
+
+void k_thread_a(void *arg)
+{
+    char *para = arg;
+    while (1) {
+        put_str(para);
+    }
 }

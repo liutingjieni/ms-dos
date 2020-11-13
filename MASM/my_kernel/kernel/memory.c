@@ -209,7 +209,6 @@ void *malloc_page(enum pool_flags pf, uint32_t pg_cnt)
     if (vaddr_start == NULL) {
         return NULL;
     }
-    put_int(vaddr_start);
     uint32_t vaddr = (uint32_t)vaddr_start, cnt = pg_cnt;
     put_int(vaddr);
     put_str("\n");
