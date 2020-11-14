@@ -26,6 +26,7 @@ static void pic_init(void);
 void idt_init(void);
 static void general_intr_handler(uint8_t vec_nr);
 static void exception_init(void);
+void register_handler(uint8_t vector_no, intr_handler function);
 
 //定义中断的两种状态
 enum intr_status {

@@ -59,9 +59,9 @@ struct list_elem *list_pop(struct list *plist)
     return elem;
 }
 
-bool list_empty(struct list *plist)
+int list_empty(struct list *plist)
 {
-    retrun (plist->head.next == &plist->tail ? true : false);
+    return (plist->head.next == &plist->tail ? 1 : 0);
 }
 
 uint32_t list_len(struct list *plist)
@@ -88,12 +88,12 @@ struct list_elem *list_traversal(struct list *plist, function func, int arg)
     }
     return NULL;
 }
-bool elem_find(struct list *plist, struct list_elem *obj_elem)
+int elem_find(struct list *plist, struct list_elem *obj_elem)
 {
     struct list_elem *elem = plist->head.next;
-    while (elem != &plist->list) {
+    while (elem != &plist->tail) {
         if (elem == obj_elem) {
-            return true;
+            return 1;
         }
         elem = elem->next;
     }

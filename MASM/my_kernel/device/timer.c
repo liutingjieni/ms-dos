@@ -8,7 +8,9 @@
 #include "timer.h"
 #include "io.h"
 #include "print.h"
-
+#include "thread.h"
+#include "debug.h"
+#include "interrupt.h"
 //编程8253, 通过控制字指定使用计数器0, 工作方式2比率发生器, 并且计数器0赋予合适的计算初值
 //计数器0~3的端口0~2 , 端口号0x40~0x42
 //控制器寄存器的操作端口为0x43
@@ -30,12 +32,28 @@
 #define READ_WRITE_LATCH 3                              
 //控制器的端口号
 #define PIT_CONTROL_PORT 0x43
+uint32_t ticks;
 
-static void frequency_set(uint8_t counter_port, 
-                          uint8_t counter_no,
-                          uint8_t rwl,
-                          uint8_t counter_mode,
-                          uint16_t counter_value ) {
+
+static void intr_timer_handler(void)
+{
+    struct task_struct *cur_thread = running_thread();
+
+    ASSERT(cur_thread->stack_magic == 0x19870916);
+
+    cur_thread->elapsed_ticks++;
+    ticks++;
+
+    if (cur_thread->ticks == 0) {
+        schedule();
+    }
+    else {
+        cur_thread->ticks--;
+    }
+}
+
+static void frequency_set(uint8_t counter_port, uint8_t counter_no, uint8_t rwl, uint8_t counter_mode, uint16_t counter_value ) 
+{
     outb(PIT_CONTROL_PORT, (uint8_t)(counter_no << 6 | rwl << 4 | counter_mode << 1));
     
     outb(counter_port, (uint8_t)counter_value);
@@ -45,8 +63,9 @@ static void frequency_set(uint8_t counter_port,
 void timer_init()
 {
     put_str("timer_init start\n");
-    put_str("timer_init start\n");
 
     frequency_set(COUNTER0_PORT, COUNTER_NO, READ_WRITE_LATCH, COUNTER_MODE, COUNTER0_VALUE);
+    register_handler(0x20, intr_timer_handler);
     put_str("timer_init end");
 }
+

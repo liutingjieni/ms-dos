@@ -6,7 +6,7 @@ SELECTOR_VIDEO equ(0x0003 << 3) + T1_GDT + RPL0
 section .text
 
 global put_char
-
+global set_cursor
 ;----------------put_char----------------
 ;功能描述:把栈中的1个字符写入光标所在处
 ;----------------------------------------
@@ -54,7 +54,7 @@ put_char:
     inc bx
     mov byte [gs:bx], 0x7
     shr bx, 1
-    jmp .set_cursor
+    jmp set_cursor
 
 .put_other:
     shl bx, 1
@@ -65,7 +65,7 @@ put_char:
     shr bx, 1
     inc bx
     cmp bx, 2000
-    jl .set_cursor
+    jl set_cursor
 
 .is_line_feed:
 .is_carrisge_return:
@@ -80,7 +80,7 @@ put_char:
     cmp bx, 2000
 
 .is_line_feed_end:
-    jl .set_cursor
+    jl set_cursor
 
 ;滚屏
 .roll_screen:
@@ -101,7 +101,7 @@ put_char:
 
 ;将光标值重置为最后一行首字符
     mov bx, 1920
-.set_cursor:
+set_cursor:
     mov dx, 0x03d4
     mov al, 0x0e
     out dx, al
