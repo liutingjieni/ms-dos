@@ -3,8 +3,10 @@
 %define ZERO push 0		 ; 若在相关的异常中cpu没有压入错误码,为了统一栈中格式,就手工压入一个0
 
 extern idt_table		 ;idt_table是C中注册的中断处理程序数组
-
+extern put_str
+extern put_int
 section .data
+intr_sttr db "interrupt", 0xa, 0
 global intr_entry_table
 intr_entry_table:
 
@@ -25,7 +27,10 @@ intr%1entry:		 ; 每个中断处理程序都要压入中断向量号,所以一�
    out 0xa0,al                   ; 向从片发送
    out 0x20,al                   ; 向主片发送
 
-   push %1			 ; 不管idt_table中的目标程序是否需要参数,都一律压入中断向量号,调试时很方便
+   push %1
+   call put_int
+   add esp, 4
+   push %1; 不管idt_table中的目标程序是否需要参数,都一律压入中断向量号,调试时很方便
    call [idt_table + %1*4]       ; 调用idt_table中的C版本中断处理函数
    jmp intr_exit
 

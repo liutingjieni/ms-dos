@@ -97,4 +97,5 @@ int elem_find(struct list *plist, struct list_elem *obj_elem)
         }
         elem = elem->next;
     }
+    return 0;
 }

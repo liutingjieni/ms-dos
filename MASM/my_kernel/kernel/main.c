@@ -20,9 +20,11 @@ int main(void)
     put_int(0x1234);
     init_all();
     //ASSERT(1==2);
-    thread_start("k_thread_a", 31, k_thread_a, "argA");
-    thread_start("k_thread_b", 8, k_thread_a, "argB");
+    put_str("main ");
+    //thread_start("k_thread_a", 31, k_thread_a, "argA");
+    //thread_start("k_thread_b", 8, k_thread_a, "argB");
     intr_enable();
+    //asm volatile("sti");
     while(1)
     {
         put_str("main ");

@@ -82,26 +82,26 @@ static void general_intr_handler(uint8_t vec_nr)
     if (vec_nr == 0x27 || vec_nr == 0x2f) {
         return;
     }
-    set_cursor(0);
-    int cursor_pos = 0;
-    while (cursor_pos < 320) {
-        put_char(' ');
-        cursor_pos++;
-    }
+    put_char('a');
+    //set_cursor(0);
+    //int cursor_pos = 0;
+    //while (cursor_pos < 320) {
+    //    put_char(' ');
+    //    cursor_pos++;
+    //}
 
-    set_cursor(0);
-    put_str("!!!!!!!! exction message begin !!!!!!!!!!!\n");
-    set_cursor(88);
-    put_str(intr_name[vec_nr]);
-    if (vec_nr == 14) {
-        int page_fault_vaddr = 0;
-        asm ("movl %%cr2, %0" : "=r"(page_fault_vaddr));
+    //set_cursor(0);
+    //put_str("!!!!!!!! exction message begin !!!!!!!!!!!\n");
+    //set_cursor(88);
+    //put_str(intr_name[vec_nr]);
+    //if (vec_nr == 14) {
+    //    int page_fault_vaddr = 0;
+    //    asm ("movl %%cr2, %0" : "=r"(page_fault_vaddr));
 
-        put_str("\n page fault addr is ");
-        put_int(page_fault_vaddr);
-    }
-    put_str("\n!!!!!!!! exction message end !!!!!!!!!!!!\n");
-    while(1);
+    //    put_str("\n page fault addr is ");
+    //    put_int(page_fault_vaddr);
+    //}
+    put_str("\n!!!!!!!! exction message end !!xx");
 }
 
 static void exception_init(void)
@@ -148,6 +148,7 @@ void idt_init()
     put_str("idt_init done\n");
 }
 
+
 //开中断并返回花开中断前的状态
 enum intr_status intr_enable(void)
 {
@@ -168,11 +169,9 @@ enum intr_status intr_disable(void)
     enum intr_status old_status;
     if (INTR_NO == intr_get_status()) {
         old_status = INTR_NO;
-        put_str("INTR_NO---");
         asm volatile("cli": : :"memory");
         return old_status;
     } else {
-        put_str("INTR_OFF--_-");
         old_status = INTR_OFF;
         return old_status;
     }

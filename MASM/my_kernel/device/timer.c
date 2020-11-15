@@ -32,7 +32,7 @@
 #define READ_WRITE_LATCH 3                              
 //控制器的端口号
 #define PIT_CONTROL_PORT 0x43
-uint32_t ticks;
+uint32_t ticks = 0;
 
 
 static void intr_timer_handler(void)
@@ -41,6 +41,8 @@ static void intr_timer_handler(void)
 
     ASSERT(cur_thread->stack_magic == 0x19870916);
 
+    //put_int(ticks);
+    //put_int(cur_thread->ticks);
     cur_thread->elapsed_ticks++;
     ticks++;
 
@@ -65,7 +67,7 @@ void timer_init()
     put_str("timer_init start\n");
 
     frequency_set(COUNTER0_PORT, COUNTER_NO, READ_WRITE_LATCH, COUNTER_MODE, COUNTER0_VALUE);
-    register_handler(0x20, intr_timer_handler);
+    register_handler(6, intr_timer_handler);
     put_str("timer_init end");
 }
 

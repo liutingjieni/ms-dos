@@ -91,8 +91,7 @@ struct task_struct *thread_start(char *name, int prio, thread_func function, voi
 static void make_main_thread(void)
 {
     main_thread = running_thread();
-    init_thread(main_thread, "main", 31);
-
+    init_thread(main_thread, "main", 310000);
     ASSERT(!elem_find(&thread_all_list, &main_thread->all_list_tag));
     list_append(&thread_all_list, &main_thread->all_list_tag);
 }
@@ -116,6 +115,8 @@ void schedule()
     thread_tag = list_pop(&thread_ready_list);
     struct task_struct *next = elem2entry(struct task_struct, general_tag, thread_tag);
     next->status = TASK_RUNNING;
+    //put_int(cur);
+    //put_int(next);
     switch_to(cur, next);
 }
 
