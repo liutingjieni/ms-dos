@@ -32,6 +32,11 @@ intr%1entry:		 ; 每个中断处理程序都要压入中断向量号,所以一�
    ;add esp, 4
    push %1; 不管idt_table中的目标程序是否需要参数,都一律压入中断向量号,调试时很方便
    call [idt_table + %1*4]       ; 调用idt_table中的C版本中断处理函数
+
+  ; push intr_sttr
+  ; call put_str
+  ; add esp, 4
+
    jmp intr_exit
 
 section .data
@@ -42,6 +47,10 @@ section .text
 global intr_exit
 intr_exit:	     
 ; 以下是恢复上下文环境
+ ;  push intr_sttr
+ ;  call put_str
+ ;  add esp, 4
+   
    add esp, 4			   ; 跳过中断号
    popad
    pop gs
@@ -83,4 +92,5 @@ VECTOR 0x1c,ZERO
 VECTOR 0x1d,ERROR_CODE
 VECTOR 0x1e,ERROR_CODE
 VECTOR 0x1f,ZERO 
+VECTOR 0x20,ZERO 
 

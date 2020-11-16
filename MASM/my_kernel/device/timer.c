@@ -38,9 +38,10 @@ uint32_t ticks = 0;
 static void intr_timer_handler(void)
 {
     struct task_struct *cur_thread = running_thread();
-
+//    put_int(intr_disable());
+    //put_str("\n");
     ASSERT(cur_thread->stack_magic == 0x19870916);
-
+ //   put_int(cur_thread);
     //put_int(ticks);
     //put_int(cur_thread->ticks);
     cur_thread->elapsed_ticks++;
@@ -48,6 +49,8 @@ static void intr_timer_handler(void)
 
     if (cur_thread->ticks == 0) {
         //put_int(0);
+      //  put_str("\n");
+        cur_thread->ticks = 31;
         schedule();
     }
     else {
@@ -68,7 +71,7 @@ void timer_init()
     put_str("timer_init start\n");
 
     frequency_set(COUNTER0_PORT, COUNTER_NO, READ_WRITE_LATCH, COUNTER_MODE, COUNTER0_VALUE);
-    register_handler(0xe, intr_timer_handler);
+    register_handler(0x20, intr_timer_handler);
     put_str("timer_init end");
 }
 

@@ -88,6 +88,11 @@ struct task_struct {
     uint32_t *pgdir;               //进程自己页表的虚拟地址
     uint32_t stack_magic;          //这串数字做栈的边界标记. 用于检测栈的溢出
 };
+struct task_struct *main_thread;     //主线程PCB
+struct list thread_ready_list;       //就绪队列
+struct list thread_all_list;         //所有任务队列
+static struct list_elem *thread_tag; //用于保存队列中的线程结点
+
 struct task_struct *thread_start(char *name, int prio, thread_func function, void *func_arg);
 struct task_struct *running_thread();
 void schedule();

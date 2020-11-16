@@ -15,10 +15,6 @@
 #include "switch.h"
 #define PG_SIZE 4096
 
-struct task_struct *main_thread;     //主线程PCB
-struct list thread_ready_list;       //就绪队列
-struct list thread_all_list;         //所有任务队列
-static struct list_elem *thread_tag; //用于保存队列中的线程结点
 
 extern void switch_to(struct task_struct *cur, struct task_struct *next);
 
@@ -31,6 +27,7 @@ struct task_struct *running_thread()
 
 static void kernel_thread(thread_func *function, void *func_arg)
 {
+    struct task_struct *t = running_thread();
     intr_enable();
     function(func_arg);
 }
@@ -91,7 +88,8 @@ struct task_struct *thread_start(char *name, int prio, thread_func function, voi
 static void make_main_thread(void)
 {
     main_thread = running_thread();
-    init_thread(main_thread, "main", 310000);
+    init_thread(main_thread, "main", 31);
+
     ASSERT(!elem_find(&thread_all_list, &main_thread->all_list_tag));
     list_append(&thread_all_list, &main_thread->all_list_tag);
 }
@@ -115,9 +113,9 @@ void schedule()
     thread_tag = list_pop(&thread_ready_list);
     struct task_struct *next = elem2entry(struct task_struct, general_tag, thread_tag);
     next->status = TASK_RUNNING;
-    put_int(cur);
-    put_int(next);
-    put_str("\n");
+    //put_int(list_len(&thread_ready_list));
+    //put_int(next);
+    //put_str("\n");
     switch_to(cur, next);
 }
 
