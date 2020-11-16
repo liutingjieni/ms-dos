@@ -23,6 +23,7 @@ int main(void)
     put_str("main ");
     //thread_start("k_thread_a", 31, k_thread_a, "argA");
     //thread_start("k_thread_b", 8, k_thread_a, "argB");
+    put_str("lalall");
     intr_enable();
     //asm volatile("sti");
     while(1)
@@ -34,6 +35,7 @@ int main(void)
 
 void k_thread_a(void *arg)
 {
+    put_str("***************\n");
     char *para = arg;
     while (1) {
         put_str(para);

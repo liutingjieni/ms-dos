@@ -5,9 +5,9 @@ section .text
 extern put_str
 global switch_to
 switch_to:
-    push str1
-    call put_str
-    add esp , 4
+    ;push str1
+    ;call put_str
+    ;add esp , 4
     push esi
     push edi
     push ebx

@@ -47,6 +47,7 @@ static void intr_timer_handler(void)
     ticks++;
 
     if (cur_thread->ticks == 0) {
+        //put_int(0);
         schedule();
     }
     else {
@@ -67,7 +68,7 @@ void timer_init()
     put_str("timer_init start\n");
 
     frequency_set(COUNTER0_PORT, COUNTER_NO, READ_WRITE_LATCH, COUNTER_MODE, COUNTER0_VALUE);
-    register_handler(6, intr_timer_handler);
+    register_handler(0xe, intr_timer_handler);
     put_str("timer_init end");
 }
 
