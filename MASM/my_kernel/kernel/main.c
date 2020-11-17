@@ -12,7 +12,7 @@
 #include "interrupt.h"
 #include "thread.h"
 #include "list.h"
-
+#include "console.h"
 void k_thread_a(void *);
 void k_thread_b(void *);
 
@@ -27,26 +27,23 @@ int main(void)
     thread_start("k_thread_a", 31, k_thread_a, "argA ");
     thread_start("k_thread_b", 8, k_thread_a, "argB ");
     //print(thread_ready_list);
-    //put_str("lalall");
+    put_str("lalall");
     //asm volatile("sti");
     intr_enable();
     while(1)
     {
-        put_str("main ");
+        console_put_str("Main ");
     }
     return 0;
 }
 
 void k_thread_a(void *arg)
 {
-    put_str("***************\n");
-    put_str("***************\n");
-    put_str("***************\n");
-    put_str("***************\n");
-    put_str("***************\n");
     char *para = arg;
     while (1) {
-       put_str(para);
+        intr_disable();
+        put_str(para);
+        intr_enable();
     }
 }
 

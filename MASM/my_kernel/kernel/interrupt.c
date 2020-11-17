@@ -19,7 +19,6 @@
 //pushfl是将eflags寄存器的值压栈, 然后再用popl指令将其弹出到EFLAG_VAR关闭的约束中
 #define GET_EFLAGS(EFLAG_VAR) asm volatile("pushfl; popl %0;" : "=g"(EFLAG_VAR))
 
-typedef void *intr_handler;
 //中断门描述符结构体
 struct gate_desc {
     uint16_t func_offset_low_word;      //中断处理程序在目标代码段偏移量的偏移量高16位
@@ -82,27 +81,26 @@ static void general_intr_handler(uint8_t vec_nr)
     if (vec_nr == 0x27 || vec_nr == 0x2f) {
         return;
     }
-    put_char('a');
-    put_int(vec_nr);
-    //set_cursor(0);
-    //int cursor_pos = 0;
-    //while (cursor_pos < 320) {
-    //    put_char(' ');
-    //    cursor_pos++;
-    //}
+    set_cursor(0);
+    int cursor_pos = 0;
+    while (cursor_pos < 320) {
+        put_char(' ');
+        cursor_pos++;
+    }
 
-    //set_cursor(0);
-    //put_str("!!!!!!!! exction message begin !!!!!!!!!!!\n");
-    //set_cursor(88);
-    //put_str(intr_name[vec_nr]);
-    //if (vec_nr == 14) {
-    //    int page_fault_vaddr = 0;
-    //    asm ("movl %%cr2, %0" : "=r"(page_fault_vaddr));
+    set_cursor(0);
+    put_str("!!!!!!!! exction message begin !!!!!!!!!!!\n");
+    set_cursor(88);
+    put_str(intr_name[vec_nr]);
+    if (vec_nr == 14) {
+        int page_fault_vaddr = 0;
+        asm ("movl %%cr2, %0" : "=r"(page_fault_vaddr));
 
-    //    put_str("\n page fault addr is ");
-    //    put_int(page_fault_vaddr);
-    //}
-    //put_str("\n!!!!!!!! exction message end !!xx");
+        put_str("\n page fault addr is ");
+        put_int(page_fault_vaddr);
+    }
+    put_str("\n!!!!!!!! exction message end !!xx");
+    while(1);
 }
 
 static void exception_init(void)

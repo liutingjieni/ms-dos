@@ -10,6 +10,7 @@
 #include "interrupt.h"
 #include "memory.h"
 #include "thread.h"
+#include "console.h"
 void init_all()
 {
     put_str("init_all\n");
@@ -17,4 +18,5 @@ void init_all()
     mem_init();
     thread_init();
     timer_init();
+    console_init();
 }
