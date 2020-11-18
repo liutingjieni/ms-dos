@@ -57,7 +57,7 @@ void lock_acquire(struct lock *plock)
         sema_down(&plock->semaphore);
         plock->holder = running_thread();
         ASSERT(plock->holder_repeat_nr == 0);
-        plock->holder_repeat_nr == 0;
+        plock->holder_repeat_nr = 1;
     }
     else {
         plock->holder_repeat_nr++;
@@ -67,6 +67,7 @@ void lock_acquire(struct lock *plock)
 void lock_release(struct lock *plock)
 {
     ASSERT(plock->holder == running_thread());
+
     if (plock->holder_repeat_nr > 1) {
         plock->holder_repeat_nr--;
         return;

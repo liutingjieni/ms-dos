@@ -70,8 +70,8 @@ static void pic_init(void)
     outb(PIC_S_DATA, 0x01);      //ICW4: 8086模式, 正常EOI
 
     //打开主片上的IR0, 也就是目前只接受时钟产生的中断
-    outb(PIC_M_DATA, 0xfe);
-    outb(PIC_S_DATA, 0xff);
+    outb(PIC_M_DATA, 0xf8);
+    outb(PIC_S_DATA, 0xbf);
 
     put_str("   pic_init done\n");
 }
@@ -81,16 +81,19 @@ static void general_intr_handler(uint8_t vec_nr)
     if (vec_nr == 0x27 || vec_nr == 0x2f) {
         return;
     }
-    set_cursor(0);
-    int cursor_pos = 0;
-    while (cursor_pos < 320) {
-        put_char(' ');
-        cursor_pos++;
-    }
 
-    set_cursor(0);
-    put_str("!!!!!!!! exction message begin !!!!!!!!!!!\n");
-    set_cursor(88);
+    put_str("!!!!!!!! exction message begin !!!!!!!!!!!");
+    put_int(vec_nr);
+   // set_cursor(0);
+   // int cursor_pos = 0;
+   // while (cursor_pos < 320) {
+   //     put_char(' ');
+   //     cursor_pos++;
+   // }
+
+   // set_cursor(0);
+   // put_str("!!!!!!!! exction message begin !!!!!!!!!!!\n");
+   // set_cursor(88);
     put_str(intr_name[vec_nr]);
     if (vec_nr == 14) {
         int page_fault_vaddr = 0;
@@ -100,7 +103,7 @@ static void general_intr_handler(uint8_t vec_nr)
         put_int(page_fault_vaddr);
     }
     put_str("\n!!!!!!!! exction message end !!xx");
-    while(1);
+    //while(1);
 }
 
 static void exception_init(void)
