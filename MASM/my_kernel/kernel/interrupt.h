@@ -8,7 +8,7 @@
 #ifndef _INTERRUPT_H
 #define _INTERRUPT_H
 #include "stdint.h"
-#define IDT_DESC_CNT 0x21
+#define IDT_DESC_CNT 0x30
 
 typedef void *intr_handler;
 //中断门描述符结构体

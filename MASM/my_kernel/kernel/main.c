@@ -21,14 +21,16 @@ int main(void)
     put_str("l am kernel\n");
     init_all();
     //ASSERT(1==2);
-    thread_start("k_thread_a", 31, k_thread_a, "argA ");
-    thread_start("k_thread_b", 8, k_thread_b, "argB ");
+    //thread_start("k_thread_a", 31, k_thread_a, "argA ");
+    //thread_start("k_thread_b", 8, k_thread_b, "argB ");
     intr_enable();
-    while(1)
-    {
-       // put_str("Main ");
-        console_put_str("Main ");
-    }
+    
+    while(1);
+    //while(1)
+    //{
+    //   // put_str("Main ");
+    //    console_put_str("Main ");
+    //}
     return 0;
 }
 
