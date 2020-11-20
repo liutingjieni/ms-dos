@@ -8,4 +8,5 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 void keyboard_init(void);
+extern struct ioqueue kdb_buf;
 #endif

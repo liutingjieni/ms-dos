@@ -13,6 +13,8 @@
 #include "thread.h"
 #include "list.h"
 #include "console.h"
+#include "keyboard.h"
+#include "ioqueue.h"
 void k_thread_a(void *);
 void k_thread_b(void *);
 
@@ -20,9 +22,10 @@ int main(void)
 {
     put_str("l am kernel\n");
     init_all();
+    put_str("l am kernel\n");
     //ASSERT(1==2);
-    //thread_start("k_thread_a", 31, k_thread_a, "argA ");
-    //thread_start("k_thread_b", 8, k_thread_b, "argB ");
+    thread_start("k_thread_a", 31, k_thread_a, "argA ");
+    thread_start("k_thread_b", 8, k_thread_b, "argB ");
     intr_enable();
     
     while(1);
@@ -36,19 +39,30 @@ int main(void)
 
 void k_thread_a(void *arg)
 {
-    char *para = arg;
     while (1) {
+        enum intr_status old_status = intr_disable();
+        if (!ioq_empty(&kdb_buf)) {
+            console_put_str(arg);
+            char byte = ioq_getchar(&kdb_buf);
+            console_put_char(byte);
+        }
         //put_str(para);
-        console_put_str(para);
+        intr_set_status(old_status);
     }
 }
 
 void k_thread_b(void *arg)
 {
-    char *para = arg;
     while (1) {
+        enum intr_status old_status = intr_disable();
+        if (!ioq_empty(&kdb_buf)) {
+            console_put_str(arg);
+            char byte = ioq_getchar(&kdb_buf);
+            console_put_char(byte);
+        }
         //put_str(para);
-       console_put_str(para);
+        intr_set_status(old_status);
     }
+    char *para = arg;
 }
 
