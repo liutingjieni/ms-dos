@@ -61,6 +61,7 @@ static struct gdt_desc make_gdt_desc(uint32_t *desc_addr, uint32_t limit, uint8_
     return desc;
 }
 
+//在gdt中创建tss并重新加载gdt
 void tss_init()
 {
     uint32_t tss_size = sizeof(tss);
@@ -68,7 +69,9 @@ void tss_init()
     tss.ss0 = SELECTOR_K_STACK;
     tss.io_base = tss_size;
 
+    //tss放在gdt描述表中第四个位置
     *((struct gdt_desc *)0xc0000923) = make_gdt_desc((uint32_t *)&tss, tss_size - 1, TSS_ATTR_LOW, TSS_ATTR_HIGH);
+    //gdt中添加DPL为3的代码段和数据段
     *((struct gdt_desc *)0xc000092b) = make_gdt_desc((uint32_t *)0, 0xfffff, GDT_CODE_ATTR_LOW_DPL3, GDT_ATTR_HIGH);
     *((struct gdt_desc *)0xc0000933) = make_gdt_desc((uint32_t *)0, 0xfffff, GDT_DATA_ATTR_LOW_DPL3, GDT_ATTR_HIGH);
     

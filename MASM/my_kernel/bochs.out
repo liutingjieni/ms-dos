@@ -32,37 +32,37 @@
 00000000000i[     ]   SB16 support: yes
 00000000000i[     ]   USB support: yes
 00000000000i[     ]   VGA extension support: vbe cirrus
-00000000000i[MEM0 ] allocated memory at 0x7f85a516a010. after alignment, vector=0x7f85a516b000
+00000000000i[MEM0 ] allocated memory at 0x7fa3b01dd010. after alignment, vector=0x7fa3b01de000
 00000000000i[MEM0 ] 32.00MB
 00000000000i[MEM0 ] mem block size = 0x00100000, blocks=32
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/usr/share/bochs/BIOS-bochs-latest')
-00000000000i[     ] lt_dlhandle is 0x2f78b20
+00000000000i[     ] lt_dlhandle is 0x34f8b20
 00000000000i[PLGIN] loaded plugin libbx_hdimage.so
-00000000000i[     ] lt_dlhandle is 0x2f794b0
+00000000000i[     ] lt_dlhandle is 0x34f94b0
 00000000000i[PLGIN] loaded plugin libbx_pci.so
-00000000000i[     ] lt_dlhandle is 0x2f7a030
+00000000000i[     ] lt_dlhandle is 0x34fa030
 00000000000i[PLGIN] loaded plugin libbx_pci2isa.so
-00000000000i[     ] lt_dlhandle is 0x2f7aa40
+00000000000i[     ] lt_dlhandle is 0x34faa40
 00000000000i[PLGIN] loaded plugin libbx_acpi.so
-00000000000i[     ] lt_dlhandle is 0x2f7b440
+00000000000i[     ] lt_dlhandle is 0x34fb440
 00000000000i[PLGIN] loaded plugin libbx_cmos.so
-00000000000i[     ] lt_dlhandle is 0x2f7bd80
+00000000000i[     ] lt_dlhandle is 0x34fbd80
 00000000000i[PLGIN] loaded plugin libbx_dma.so
-00000000000i[     ] lt_dlhandle is 0x2f7c810
+00000000000i[     ] lt_dlhandle is 0x34fc810
 00000000000i[PLGIN] loaded plugin libbx_pic.so
-00000000000i[     ] lt_dlhandle is 0x2f7d0d0
+00000000000i[     ] lt_dlhandle is 0x34fd0d0
 00000000000i[PLGIN] loaded plugin libbx_pit.so
-00000000000i[     ] lt_dlhandle is 0x2f7db00
+00000000000i[     ] lt_dlhandle is 0x34fdb00
 00000000000i[PLGIN] loaded plugin libbx_floppy.so
-00000000000i[     ] lt_dlhandle is 0x2f7e6f0
+00000000000i[     ] lt_dlhandle is 0x34fe6f0
 00000000000i[PLGIN] loaded plugin libbx_vga.so
-00000000000i[     ] lt_dlhandle is 0x2f7ee80
+00000000000i[     ] lt_dlhandle is 0x34fee80
 00000000000i[PLGIN] loaded plugin libbx_ioapic.so
-00000000000i[     ] lt_dlhandle is 0x2f7f8c0
+00000000000i[     ] lt_dlhandle is 0x34ff8c0
 00000000000i[PLGIN] loaded plugin libbx_keyboard.so
-00000000000i[     ] lt_dlhandle is 0x2f80160
+00000000000i[     ] lt_dlhandle is 0x3500160
 00000000000i[PLGIN] loaded plugin libbx_harddrv.so
-00000000000i[     ] lt_dlhandle is 0x2f92250
+00000000000i[     ] lt_dlhandle is 0x3512250
 00000000000i[PLGIN] loaded plugin libbx_pci_ide.so
 00000000000i[PLGIN] init_dev of 'pci' plugin device by virtual method
 00000000000i[PCI  ] 440FX Host bridge present at device 0, function 0
@@ -70,7 +70,7 @@
 00000000000i[PCI  ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Mon Nov 23 21:37:27 2020 (time0=1606138647)
+00000000000i[CMOS ] Setting initial clock to: Mon Nov 23 21:43:03 2020 (time0=1606138983)
 00000000000i[PLGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[PLGIN] init_dev of 'pic' plugin device by virtual method
@@ -27874,26 +27874,27 @@
 00018090242e[HD   ] IO read(0x01f0) with drq == 0: last command was 00h
 00018090251i[MEM0 ] allocate_block: block=0x1 used 0x3 of 0x20
 00018186221i[MEM0 ] allocate_block: block=0x2 used 0x4 of 0x20
-00907711721i[     ] Ctrl-C detected in signal handler.
-00907711722i[XGUI ] Mouse capture off
-00907711722i[     ] dbg: Quit
-00907711722i[CPU0 ] CPU is in protected mode (active)
-00907711722i[CPU0 ] CS.mode = 32 bit
-00907711722i[CPU0 ] SS.mode = 32 bit
-00907711722i[CPU0 ] EFER   = 0x00000000
-00907711722i[CPU0 ] | EAX=00000000  EBX=c0007000  ECX=c0101e50  EDX=c0101028
-00907711722i[CPU0 ] | ESP=c009eff0  EBP=c009eff8  ESI=00070000  EDI=00000000
-00907711722i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df IF tf SF zf AF PF CF
-00907711722i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00907711722i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00907711722i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00907711722i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00907711722i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00907711722i[CPU0 ] |  FS:0000( 0000| 0|  0) 00000000 00000000 0 0
-00907711722i[CPU0 ] |  GS:0018( 0003| 0|  0) c00b8000 08ffffff 1 1
-00907711722i[CPU0 ] | EIP=c0001586 (c0001586)
-00907711722i[CPU0 ] | CR0=0xe0000011 CR2=0x00000000
-00907711722i[CPU0 ] | CR3=0x00100000 CR4=0x00000000
-00907711722i[CMOS ] Last time is 1606138873 (Mon Nov 23 21:41:13 2020)
-00907711722i[XGUI ] Exit
-00907711722i[CTRL ] quit_sim called with exit code 0
+00075542161i[     ] Ctrl-C detected in signal handler.
+00075542162i[XGUI ] Mouse capture off
+00075542162i[XGUI ] Mouse capture off
+00075542162i[     ] dbg: Quit
+00075542162i[CPU0 ] CPU is in protected mode (active)
+00075542162i[CPU0 ] CS.mode = 32 bit
+00075542162i[CPU0 ] SS.mode = 32 bit
+00075542162i[CPU0 ] EFER   = 0x00000000
+00075542162i[CPU0 ] | EAX=00000001  EBX=c0007000  ECX=c0101e50  EDX=00000000
+00075542162i[CPU0 ] | ESP=c0100df0  EBP=c0100e00  ESI=00000000  EDI=00000000
+00075542162i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf zf af pf cf
+00075542162i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+00075542162i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+00075542162i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00075542162i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00075542162i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00075542162i[CPU0 ] |  FS:0000( 0000| 0|  0) 00000000 00000000 0 0
+00075542162i[CPU0 ] |  GS:0018( 0003| 0|  0) c00b8000 08ffffff 1 1
+00075542162i[CPU0 ] | EIP=c0002080 (c0002080)
+00075542162i[CPU0 ] | CR0=0xe0000011 CR2=0x00000000
+00075542162i[CPU0 ] | CR3=0x00100000 CR4=0x00000000
+00075542162i[CMOS ] Last time is 1606139001 (Mon Nov 23 21:43:21 2020)
+00075542162i[XGUI ] Exit
+00075542162i[CTRL ] quit_sim called with exit code 0
