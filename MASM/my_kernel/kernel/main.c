@@ -42,7 +42,7 @@ void k_thread_a(void *arg)
     while (1) {
         enum intr_status old_status = intr_disable();
         if (!ioq_empty(&kdb_buf)) {
-            console_put_str(arg);
+            //console_put_str(arg);
             char byte = ioq_getchar(&kdb_buf);
             console_put_char(byte);
         }
@@ -56,7 +56,7 @@ void k_thread_b(void *arg)
     while (1) {
         enum intr_status old_status = intr_disable();
         if (!ioq_empty(&kdb_buf)) {
-            console_put_str(arg);
+            //console_put_str(arg);
             char byte = ioq_getchar(&kdb_buf);
             console_put_char(byte);
         }

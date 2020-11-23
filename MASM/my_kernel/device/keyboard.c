@@ -178,7 +178,7 @@ static void intr_keyboard_handler(void)
         char cur_char = keymap[index][shift];
         if (cur_char) {
             if (!ioq_full(&kdb_buf)) {
-                put_char(cur_char);
+                //put_char(cur_char);
                 ioq_putchar(&kdb_buf, cur_char);
             }
             return;
