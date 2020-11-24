@@ -160,15 +160,18 @@ void *get_kernel_pages(uint32_t pg_cnt)
     return vaddr;
 }
 
+//在用户空间中申请4K内存, 并返回其虚拟地址
 void *get_user_pages(uint32_t pg_cnt)
 {
     lock_acquire(&user_pool.lock);
-    void *vaddr = malloc_page(PF_KERNEL, pg_cnt);
+    void *vaddr = malloc_page(PF_USER, pg_cnt);
     memset(vaddr, 0, pg_cnt * PG_SIZE);
     lock_release(&user_pool.lock);
     return vaddr;
 }
 
+//申请一页内存, 用vaddr映射到该页, 也就是说我们可以指定虚拟地址
+//将地址vaddr与pf池中的物理地址相关联, 仅支持一页分配
 void *get_a_page(enum pool_flags pf, uint32_t vaddr)
 {
     struct pool *mem_pool = pf & PF_KERNEL ? &kernel_pool : &user_pool;
@@ -177,6 +180,7 @@ void *get_a_page(enum pool_flags pf, uint32_t vaddr)
     struct task_struct *cur = running_thread();
     int32_t bit_idx = -1;
 
+    //若当前是用户进程
     if (cur->pgdir != NULL && pf == PF_USER) {
         bit_idx = (vaddr - cur->userprog_vaddr.vaddr_start) / PG_SIZE;
         ASSERT(bit_idx > 0);
@@ -199,9 +203,11 @@ void *get_a_page(enum pool_flags pf, uint32_t vaddr)
     return (void *)vaddr;
 }
 
+//得到虚拟地址映射的物理地址
 uint32_t addr_v2p(uint32_t vaddr)
 {
     uint32_t *pte = pte_ptr(vaddr);
+    //去掉其低12位的页表项属性 + 虚拟地址vaddr的低12位
     return ((*pte & 0xfffff000) + (vaddr & 0x00000fff));
 }
 
