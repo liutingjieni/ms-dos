@@ -8,7 +8,6 @@
 #ifndef _LIST_H
 #define _LIST_H
 #include "stdint.h"
-#define NULL 0
 //为了将结点元素转换成实际元素项
 #define offset(struct_type, member) (int)(&((struct_type*)0)->member)
 #define elem2entry(struct_type, struct_member_name, elem_ptr) \

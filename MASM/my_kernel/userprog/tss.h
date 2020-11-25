@@ -8,4 +8,5 @@
 #ifndef _TSS_H
 #define _TSS_H
 void tss_init(void);
+void update_tss_esp(struct task_struct *pthread);
 #endif

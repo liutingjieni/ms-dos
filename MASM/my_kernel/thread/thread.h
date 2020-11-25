@@ -9,6 +9,7 @@
 #define _THREAD_H
 #include "stdint.h"
 #include "list.h"
+#include "thread.h"
 //自定义通用函数类型, 他将在很多线程中作为形参类型
 typedef void thread_func(void *);
 
@@ -40,7 +41,7 @@ struct intr_stack {
     uint32_t eax;
     uint32_t gs;
     uint32_t fs;
-    uint32_t ed;
+    uint32_t es;
     uint32_t ds;
 
     //以下是由cpu从低特权级进入高特权级时压入
@@ -101,4 +102,6 @@ void thread_init();
 void thread_block(enum task_status stat);
 void thread_unblock(struct task_struct *pthread);
 
+void init_thread(struct task_struct* pthread, char *name, int prio);
+void thread_create(struct task_struct* pthread, thread_func function, void *func_arg);
 #endif

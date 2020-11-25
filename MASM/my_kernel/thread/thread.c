@@ -5,7 +5,6 @@
 	> Created Time: 2020年11月13日 星期五 11时36分27秒
  ************************************************************************/
 
-#include "thread.h"
 #include "stdint.h"
 #include "string.h"
 #include "global.h"
@@ -13,6 +12,7 @@
 #include "interrupt.h"
 #include "print.h"
 #include "switch.h"
+#include "process.h"
 #define PG_SIZE 4096
 
 
@@ -113,6 +113,7 @@ void schedule()
     thread_tag = list_pop(&thread_ready_list);
     struct task_struct *next = elem2entry(struct task_struct, general_tag, thread_tag);
     next->status = TASK_RUNNING;
+    process_activate(next);
     //put_int(list_len(&thread_ready_list));
     //put_int(next);
     //put_str("\n");

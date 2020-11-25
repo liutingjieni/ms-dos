@@ -36,4 +36,7 @@ enum pool_flags {
 #define PG_US_U 4                  //用户位
 
 void *get_kernel_pages(uint32_t);
+
+uint32_t addr_v2p(uint32_t vaddr);
+void *get_a_page(enum pool_flags pf, uint32_t vaddr);
 #endif

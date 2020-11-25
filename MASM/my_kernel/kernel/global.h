@@ -72,4 +72,16 @@ struct gdt_desc {
    uint8_t limit_high_attr_high;
    uint8_t base_high_byte;
 };
+
+
+#define EFLAGS_MBS      (1 << 1)
+#define EFLAGS_IF_1     (1 << 9)
+#define EFLAGS_IF_0     0
+#define EFLAGS_IOPL_3   (3 << 12)
+#define EFLAGS_IOPL_0   (0 << 12)
+#define DIV_ROUND_UP(X, STEP) ((X + STEP - 1) / (STEP))
+#define bool int
+#define true  1
+#define false 0
+#define PG_SIZE 4096
 #endif
