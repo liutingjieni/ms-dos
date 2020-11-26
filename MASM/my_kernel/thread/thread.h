@@ -10,6 +10,7 @@
 #include "stdint.h"
 #include "list.h"
 #include "thread.h"
+#include "memory.h"
 //自定义通用函数类型, 他将在很多线程中作为形参类型
 typedef void thread_func(void *);
 

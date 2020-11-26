@@ -7,7 +7,6 @@
 
 #include "global.h"
 #include "tss.h"
-#include "thread.h"
 #include "string.h"
 #include "print.h"
 #define PG_SIZE 4096

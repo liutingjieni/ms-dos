@@ -7,6 +7,7 @@
 
 #include "memory.h"
 #include "stdint.h"
+#include "sync.h"
 #include "print.h"
 
 #define PG_SIZE 4096

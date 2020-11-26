@@ -5,10 +5,10 @@
 	> Created Time: 2020年11月13日 星期五 11时36分27秒
  ************************************************************************/
 
+#include "thread.h"
 #include "stdint.h"
 #include "string.h"
 #include "global.h"
-#include "memory.h"
 #include "interrupt.h"
 #include "print.h"
 #include "switch.h"
