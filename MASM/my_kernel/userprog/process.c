@@ -16,7 +16,9 @@ extern void intr_exit(void);
 //初始化用户进程上下文信息
 void start_process(void *filename_)
 {
+    console_put_str("start_proess start\n");
     void *function = filename_;
+    //put_int(function);
     struct task_struct *cur = running_thread();
     cur->self_kstack += sizeof(struct thread_stack);
     struct intr_stack *proc_stack = (struct intr_stack *)cur->self_kstack;
@@ -32,7 +34,9 @@ void start_process(void *filename_)
     //USER_STACK3_VADDR = 0xc0000000 - 0x1000, 是用户栈空间的下边界 + PG_SIZE是栈的上边界， 即栈底
     proc_stack->esp = (void *)((uint32_t)get_a_page(PF_USER, USER_STACK3_VADDR) + PG_SIZE);
     proc_stack->ss = SELECTOR_U_DATA;
+    console_put_str("start_proess start\n");
     asm volatile("movl %0, %%esp; jmp intr_exit": : "g"(proc_stack): "memory");
+    console_put_str("start_proess end\n");
 }
 
 //激活页表
@@ -88,6 +92,7 @@ void create_user_vaddr_bitmap(struct task_struct *user_prog)
 //创建用户进程, filename是用户进程地址, name是进程名
 void process_execute(void *filename, char *name)
 {
+    console_put_str("process_execute start\n");
     struct task_struct *thread = get_kernel_pages(1);
     init_thread(thread, name, default_prio);
     create_user_vaddr_bitmap(thread);
@@ -101,4 +106,6 @@ void process_execute(void *filename, char *name)
     ASSERT(!elem_find(&thread_all_list, &thread->all_list_tag));
     list_append(&thread_all_list, &thread->all_list_tag);
     intr_set_status(old_status);
+
+    console_put_str("process_execute end\n");
 }

@@ -276,6 +276,7 @@ void mem_init()
 {
     put_str("mem_init start\n");
     uint32_t mem_bytes_total = (*(uint32_t *)(0xb03));
+    put_int(mem_bytes_total);
     mem_pool_init(mem_bytes_total);
     put_str("mem_init done\n");
 

@@ -13,11 +13,11 @@
 
 struct tss {
     uint32_t backlink;
-    uint32_t esp0;
+    uint32_t *esp0;
     uint32_t ss0;
-    uint32_t esp1;
+    uint32_t *esp1;
     uint32_t ss1;
-    uint32_t esp2;
+    uint32_t *esp2;
     uint32_t ss2;
     uint32_t cr3;
     uint32_t (*eip)(void);
@@ -63,6 +63,7 @@ static struct gdt_desc make_gdt_desc(uint32_t *desc_addr, uint32_t limit, uint8_
 //在gdt中创建tss并重新加载gdt
 void tss_init()
 {
+    put_str("tss_init and ltr start\n");
     uint32_t tss_size = sizeof(tss);
     memset(&tss, 0, tss_size);
     tss.ss0 = SELECTOR_K_STACK;
